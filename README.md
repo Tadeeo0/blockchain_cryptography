@@ -16,23 +16,23 @@ git clone https://github.com/Tadeeo0/cutparking_dashboard.git
 
 cd blockchain_cryptography
 
-2. Crear un entorno virtual
+### 2. Crear un entorno virtual
 
 python -m venv venv
 
-3. Activar el entorno virtual
+### 3. Activar el entorno virtual
 
 En Windows: venv\Scripts\activate
 
 En MacOS: source venv/bin/activate
 
-4. Instalar las dependencias
+### 4. Instalar las dependencias
    
 Una vez que tengas el entorno virtual activado, instala las dependencias del proyecto con:
 
 pip install -r requirements.txt
 
-5. Ejecutar la aplicación
+### 5. Ejecutar la aplicación
     
 Finalmente, puedes ejecutar la aplicación de Flask con:
 
