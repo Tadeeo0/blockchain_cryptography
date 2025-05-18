@@ -1,6 +1,6 @@
-# Proyecto Flask - CutParking Dashboard
+# Proyecto Flask - Blockchain Criptografia
 
-Este es un proyecto web desarrollado con Flask para la gestión de estacionamientos. El proyecto permite al administrador visualizar el estado de los espacios disponibles, realizar reservas, y mucho más.
+Este es un proyecto web desarrollado con Flask para implementar la interfaz de un blockchain.
 
 ## Requisitos
 
@@ -14,7 +14,7 @@ Este es un proyecto web desarrollado con Flask para la gestión de estacionamien
 
 git clone https://github.com/Tadeeo0/cutparking_dashboard.git
 
-cd cutparking_dashboard
+cd blockchain_cryptography
 
 2. Crear un entorno virtual
 
@@ -40,12 +40,13 @@ Crea un archivo .env en la raíz del proyecto con las siguientes variables:
 - DB_PASSWORD=your_password
 - DB_HOST=localhost
 - DB_PORT=330X
-- DB_NAME=parking_dashboard
+- DB_NAME=xxxxxxxxxxx
 
 9. Ejecutar la aplicación
     
 Finalmente, puedes ejecutar la aplicación de Flask con:
 
-python run.py
+- python run.py
+- flask run
 
 
