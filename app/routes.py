@@ -30,7 +30,6 @@ def home_view():
 def logout():
     return redirect(url_for('main.home'))
 
-    return render_template('base.html')
 
 # Ruta para historial de tokens
 @bp.route('/historial')
