@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Historial de Tokens{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4 text-info">Historial de Tokens Ganados</h2>
+
+  <table class="table table-dark table-striped table-hover">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Tipo de Residuo</th>
+        <th>Cantidad</th>
+        <th>Tokens Ganados</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for entrada in historial %}
+      <tr>
+        <td>{{ entrada.fecha }}</td>
+        <td>{{ entrada.tipo }}</td>
+        <td>{{ entrada.cantidad }}</td>
+        <td>{{ entrada.tokens }}</td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="4" class="text-center">No hay historial disponible.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+   <div class="text-center mt-4 mb-5">
+    <h4 class="text-success">Tokens Totales: {{ total_tokens }}</h4>
+    <a href="#" class="btn btn-outline-info mt-2">Canjear Tokens</a>
+  </div>
+</div>
+{% endblock %}
