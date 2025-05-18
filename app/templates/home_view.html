@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - EcoTokens{% endblock %}
+
+{% block content %}
+<div class="container mt-3 d-flex justify-content-end">
+  <form action="{{ url_for('main.logout') }}" method="POST">
+    <button type="submit" class="btn btn-outline-danger">Cerrar Sesión</button>
+  </form>
+</div>
+
+<div class="container mt-5">
+  <h2 class="text-center text-info mb-4">Bienvenido a EcoTokens</h2>
+  
+  <div class="row">
+    <!-- Escanear QR -->
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card h-100 border-info bg-dark text-light shadow">
+        <div class="card-body text-center">
+          <i class="bi bi-qr-code-scan display-4 text-info mb-3"></i>
+          <h5 class="card-title">Escanear QR</h5>
+          <p class="card-text">Escanea el código QR en un punto de reciclaje para ganar tokens.</p>
+          <a href="#" class="btn btn-outline-info">Escanear</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mapa de puntos verdes -->
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card h-100 border-success bg-dark text-light shadow">
+        <div class="card-body text-center">
+          <i class="bi bi-map-fill display-4 text-success mb-3"></i>
+          <h5 class="card-title">Puntos de Reciclaje</h5>
+          <p class="card-text">Encuentra los puntos verdes más cercanos.</p>
+          <a href="#" class="btn btn-outline-success">Ver Mapa</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial de tokens -->
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card h-100 border-warning bg-dark text-light shadow">
+        <div class="card-body text-center">
+          <i class="bi bi-clock-history display-4 text-warning mb-3"></i>
+          <h5 class="card-title">Historial</h5>
+          <p class="card-text">Consulta tus acciones de reciclaje y tokens ganados.</p>
+          <a href="#" class="btn btn-outline-warning">Ver Historial</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Canjear tokens -->
+    <div class="col-md-6 col-lg-3 mb-4">
+      <div class="card h-100 border-primary bg-dark text-light shadow">
+        <div class="card-body text-center">
+          <i class="bi bi-gift-fill display-4 text-primary mb-3"></i>
+          <h5 class="card-title">Canjear Tokens</h5>
+          <p class="card-text">Intercambia tus tokens por recompensas ecológicas.</p>
+          <a href="#" class="btn btn-outline-primary">Canjear</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr>
+{% endblock %}
