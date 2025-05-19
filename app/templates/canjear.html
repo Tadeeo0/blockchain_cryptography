@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block title %}Canjear Tokens{% endblock %}
+
+{% block content %} 
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="text-info">Catálogo de Premios</h2>
+    <a href="{{ url_for('main.home_view') }}" class="btn btn-outline-light">🏠 Volver al inicio</a>
+  </div>
+
+  <h5 id="saldo-tokens" class="text-success mb-4">Tu saldo actual: {{ total_tokens }} tokens</h5>
+
+  <div class="row">
+    {% for premio in premios %}
+    <div class="col-md-4 mb-4">
+      <div class="card h-100 shadow border-0" style="background-color: #37474F;">
+        <img src="{{ url_for('static', filename='img/' + premio.imagen) }}" 
+             class="card-img-top" 
+             alt="{{ premio.titulo }}" 
+             style="height: 200px; object-fit: contain; background-color: white;">
+        <div class="card-body text-white text-center">
+          <h5 class="card-title mb-4">{{ premio.titulo }}</h5>
+          <p class="card-text">{{ premio.descripcion }}</p>
+          <p class="text-center"><strong>Tokens necesarios:</strong> <span class="tokens-necesarios">{{ premio.tokens }}</span></p>
+        </div>
+        <div class="card-footer text-center bg-transparent border-top-0">
+          <button class="btn {% if premio.tokens > total_tokens %}btn-dark{% else %}btn-outline-light{% endif %} btn-canjear"
+                  {% if premio.tokens > total_tokens %}disabled{% endif %}
+                  data-premio="{{ premio.titulo }}">
+            Canjear
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Modal de Confirmación -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header border-bottom-0">
+        <h5 class="modal-title" id="confirmModalLabel">¿Confirmar canje?</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar" id="cerrarModalX"></button>
+      </div>
+      <div class="modal-body">
+        ¿Deseas canjear tus tokens por el premio <strong id="premioSeleccionado"></strong>?
+      </div>
+      <div class="modal-footer border-top-0">
+        <button type="button" class="btn btn-outline-light" id="cancelarCanje">Cancelar</button>
+        <button type="button" class="btn btn-success" id="confirmarCanje">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript para el manejo del modal y actualización de tokens -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const premioNombre = document.getElementById('premioSeleccionado');
+    const confirmarBtn = document.getElementById('confirmarCanje');
+    const cancelarBtn = document.getElementById('cancelarCanje');
+    const cerrarModalX = document.getElementById('cerrarModalX');
+    const modalElement = document.getElementById('confirmModal');
+    const modal = new bootstrap.Modal(modalElement);
+    const saldoElem = document.getElementById('saldo-tokens');
+
+    let premioActual = "";
+    let tokensPremio = 0;
+    let botonActual = null;
+
+    document.querySelectorAll('.btn-canjear').forEach(boton => {
+      boton.addEventListener('click', () => {
+        premioActual = boton.getAttribute('data-premio');
+        botonActual = boton;
+
+        const card = boton.closest('.card');
+        tokensPremio = parseInt(card.querySelector('.tokens-necesarios').textContent.trim());
+
+        premioNombre.textContent = premioActual;
+        modal.show();
+      });
+    });
+
+    confirmarBtn.addEventListener('click', () => {
+      // Restar tokens
+      const saldoTexto = saldoElem.textContent.match(/\d+/)[0];
+      let saldoActual = parseInt(saldoTexto);
+      saldoActual -= tokensPremio;
+      saldoElem.textContent = `Tu saldo actual: ${saldoActual} tokens`;
+
+      // Deshabilitar el botón si ya no alcanza tokens
+      if (saldoActual < tokensPremio) {
+        botonActual.classList.remove("btn-outline-light");
+        botonActual.classList.add("btn-dark");
+        botonActual.disabled = true;
+      }
+
+      // Mostrar alerta
+      const mensajeExito = document.createElement('div');
+      mensajeExito.className = 'alert alert-success alert-dismissible fade show mt-3 text-center';
+      mensajeExito.innerHTML = `
+        <strong>¡Operación exitosa!</strong> Has canjeado tus tokens por <strong>${premioActual}</strong>.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+      `;
+      document.querySelector('.container').prepend(mensajeExito);
+
+      modal.hide();
+      botonActual = null;
+    });
+
+    // Asegura que se cierre el modal con "Cancelar" o con la "X"
+    cancelarBtn.addEventListener('click', () => modal.hide());
+    cerrarModalX.addEventListener('click', () => modal.hide());
+  });
+</script>
+{% endblock %}
+
+
+

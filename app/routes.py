@@ -51,4 +51,48 @@ def mostrar_historial():
     total = sum(item['tokens'] for item in historial_ficticio)
     return render_template('historial.html', historial=historial_ficticio, total_tokens=total)
 
+#Ruta para intercambiar tokens
+@bp.route('/canjear')
+def canjear_tokens():
+    total_tokens = 134
+    premios = [
+        {
+            'titulo': 'Tarjeta de regalo Netflix',
+            'descripcion': '1 mes gratis de Netflix',
+            'tokens': 1000,
+            'imagen': 'netflix.jpg'
+        },
+        {
+            'titulo': 'Tarjeta Amazon',
+            'descripcion': 'Cupón de 200 pesos en Amazon',
+            'tokens': 500,
+            'imagen': 'amazon.png'
+        },
+        {
+            'titulo': 'Youtube Premium',
+            'descripcion': '1 mes gratis de Youtube Premium',
+            'tokens': 800,
+            'imagen': 'youtube.jpg'
+        },
+        {
+            'titulo': 'Bolsa ecológica',
+            'descripcion': 'Bolsa reutilizable de tela',
+            'tokens': 20,
+            'imagen': 'bolsa.jpeg'
+        },
+        {
+            'titulo': 'ONG',
+            'descripcion': 'Dona 100 pesos a organizacion patito',
+            'tokens': 50,
+            'imagen': 'ong.jpeg'
+        },
+        {
+            'titulo': 'Descuento Adidas',
+            'descripcion': '1000 pesos de descuento en tiendas Adidas',
+            'tokens': 5000,
+            'imagen': 'adidas.png'
+        },
+    ]
+    return render_template('canjear.html', premios=premios, total_tokens=total_tokens)
+
     
