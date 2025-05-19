@@ -5,7 +5,7 @@
 {% block content %}
 <div class="container mt-3 d-flex justify-content-end">
   <form action="{{ url_for('main.logout') }}" method="POST">
-    <button type="submit" class="btn btn-outline-danger">Cerrar Sesión</button>
+    <button type="submit" class="btn btn-outline-danger">🚪Cerrar Sesión</button>
   </form>
 </div>
 
@@ -56,7 +56,7 @@
           <i class="bi bi-gift-fill display-4 text-primary mb-3"></i>
           <h5 class="card-title">Canjear Tokens</h5>
           <p class="card-text">Intercambia tus tokens por recompensas ecológicas.</p>
-          <a href="#" class="btn btn-outline-primary">Canjear</a>
+          <a href="{{ url_for('main.canjear_tokens') }}" class="btn btn-outline-primary">Canjear</a>
         </div>
       </div>
     </div>

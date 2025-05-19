@@ -95,4 +95,15 @@ def canjear_tokens():
     ]
     return render_template('canjear.html', premios=premios, total_tokens=total_tokens)
 
-    
+#Mapa puntos de reciclaje
+@bp.route('/mapa')
+def mapa_view():
+    centros = [
+        {"nombre": "Punto A: Plaza liberación", "lat": 20.677075732853243, "lon": -103.34617531444539},
+        {"nombre": "Punto B: Parque Revolucion", "lat": 20.67481534457495, "lon": -103.35568005913393},
+        {"nombre": "Punto C: Mercado Libertad", "lat": 20.675534856586236, "lon": -103.33983074749807},
+        {"nombre": "Punto D: Minerva", "lat": 20.674615, "lon": -103.385707},
+        {"nombre": "Punto E: Templo expiatorio", "lat": 20.673222795785332, "lon": -103.35894564749809},
+    ]
+    return render_template("mapa.html", centros=centros)
+
