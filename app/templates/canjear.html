@@ -1,56 +1,51 @@
-{% extends "base.html" %}
-
-{% block title %}Canjear Tokens{% endblock %}
-
-{% block content %} 
+{% extends "base.html" %} {% block title %}Canjear Tokens{% endblock %} {% block
+content %}
 <div class="container mt-5">
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-info">Catálogo de Premios</h2>
-    <a href="{{ url_for('main.home_view') }}" class="btn btn-outline-light">🏠 Volver al inicio</a>
+    <a href="{{ url_for('main.home_view') }}" class="btn btn-outline-light"
+      >🏠 Volver al inicio</a
+    >
   </div>
 
-  <h5 id="saldo-tokens" class="text-success mb-4">Tu saldo actual: {{ total_tokens }} tokens</h5>
+  <h5 id="saldo-tokens" class="text-success mb-4">Cargando saldo...</h5>
 
-  <div class="row">
-    {% for premio in premios %}
-    <div class="col-md-4 mb-4">
-      <div class="card h-100 shadow border-0" style="background-color: #37474F;">
-        <img src="{{ url_for('static', filename='img/' + premio.imagen) }}" 
-             class="card-img-top" 
-             alt="{{ premio.titulo }}" 
-             style="height: 200px; object-fit: contain; background-color: white;">
-        <div class="card-body text-white text-center">
-          <h5 class="card-title mb-4">{{ premio.titulo }}</h5>
-          <p class="card-text">{{ premio.descripcion }}</p>
-          <p class="text-center"><strong>Tokens necesarios:</strong> <span class="tokens-necesarios">{{ premio.tokens }}</span></p>
-        </div>
-        <div class="card-footer text-center bg-transparent border-top-0">
-          <button class="btn {% if premio.tokens > total_tokens %}btn-dark{% else %}btn-outline-light{% endif %} btn-canjear"
-                  {% if premio.tokens > total_tokens %}disabled{% endif %}
-                  data-premio="{{ premio.titulo }}">
-            Canjear
-          </button>
-        </div>
-      </div>
-    </div>
-    {% endfor %}
+  <div class="row" id="premios-container">
+    <!-- Aquí se insertarán los premios dinámicamente -->
   </div>
 </div>
 
 <!-- Modal de Confirmación -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+<div
+  class="modal fade"
+  id="confirmModal"
+  tabindex="-1"
+  aria-labelledby="confirmModalLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog">
     <div class="modal-content bg-dark text-white">
       <div class="modal-header border-bottom-0">
         <h5 class="modal-title" id="confirmModalLabel">¿Confirmar canje?</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar" id="cerrarModalX"></button>
+        <button
+          type="button"
+          class="btn-close btn-close-white"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+          id="cerrarModalX"
+        ></button>
       </div>
       <div class="modal-body">
-        ¿Deseas canjear tus tokens por el premio <strong id="premioSeleccionado"></strong>?
+        ¿Deseas canjear tus tokens por el premio
+        <strong id="premioSeleccionado"></strong>?
       </div>
       <div class="modal-footer border-top-0">
-        <button type="button" class="btn btn-outline-light" id="cancelarCanje">Cancelar</button>
-        <button type="button" class="btn btn-success" id="confirmarCanje">Aceptar</button>
+        <button type="button" class="btn btn-outline-light" id="cancelarCanje">
+          Cancelar
+        </button>
+        <button type="button" class="btn btn-success" id="confirmarCanje">
+          Aceptar
+        </button>
       </div>
     </div>
   </div>
@@ -58,65 +53,128 @@
 
 <!-- JavaScript para el manejo del modal y actualización de tokens -->
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const premioNombre = document.getElementById('premioSeleccionado');
-    const confirmarBtn = document.getElementById('confirmarCanje');
-    const cancelarBtn = document.getElementById('cancelarCanje');
-    const cerrarModalX = document.getElementById('cerrarModalX');
-    const modalElement = document.getElementById('confirmModal');
-    const modal = new bootstrap.Modal(modalElement);
-    const saldoElem = document.getElementById('saldo-tokens');
+  document.addEventListener("DOMContentLoaded", async () => {
+    const saldoElem = document.getElementById("saldo-tokens");
+    const premiosContainer = document.getElementById("premios-container");
+    const userId = localStorage.getItem("userId"); // Ajusta si usas otro método para obtener el userId
+
+    let balance = 0;
+
+    try {
+      // Obtener balance
+      const resBalance = await fetch(
+        `http://localhost:4000/api/users/balance/${userId}`
+      );
+      if (!resBalance.ok) throw new Error("Error al obtener el saldo");
+      const dataBalance = await resBalance.json();
+      balance = dataBalance.balance ?? 0;
+      saldoElem.textContent = `Tu saldo actual: ${balance} tokens`;
+
+      // Obtener premios
+      const resPremios = await fetch("http://localhost:4000/api/rewards/");
+      if (!resPremios.ok) throw new Error("Error al obtener premios");
+      const premios = await resPremios.json();
+
+      // Limpiar el contenedor antes de agregar
+      premiosContainer.innerHTML = "";
+
+      premios.forEach((premio) => {
+        // Crear card
+        const card = document.createElement("div");
+        card.className = "col-md-4 mb-4";
+
+        card.innerHTML = `
+          <div class="card h-100 shadow border-0" style="background-color: #37474F;">
+            <img src="https://papertyari.com/wp-content/uploads/2019/02/rewards.jpg" 
+                 class="card-img-top" 
+                 alt="${premio.name}" 
+                 style="height: 200px; object-fit: contain; background-color: white;">
+            <div class="card-body text-white text-center">
+              <h5 class="card-title mb-4">${premio.name}</h5>
+              <p class="text-center"><strong>Tokens necesarios:</strong> <span class="tokens-necesarios">${
+                premio.cost
+              }</span></p>
+            </div>
+            <div class="card-footer text-center bg-transparent border-top-0">
+              <button class="btn ${
+                premio.cost > balance ? "btn-dark" : "btn-outline-light"
+              } btn-canjear"
+                      ${premio.cost > balance ? "disabled" : ""}
+                      data-premio="${premio.name}"
+                      data-cost="${premio.cost}"
+                      data-rewardid="${premio.id}">
+                Canjear
+              </button>
+            </div>
+          </div>
+        `;
+
+        premiosContainer.appendChild(card);
+      });
+
+      // Agregar event listeners a los botones de canje (modal y lógica)
+      setupCanjeButtons();
+    } catch (error) {
+      console.error(error);
+      saldoElem.textContent = "No se pudo cargar el saldo o premios";
+    }
 
     let premioActual = "";
     let tokensPremio = 0;
+    let rewardIdActual = null;
     let botonActual = null;
 
-    document.querySelectorAll('.btn-canjear').forEach(boton => {
-      boton.addEventListener('click', () => {
-        premioActual = boton.getAttribute('data-premio');
-        botonActual = boton;
+    function setupCanjeButtons() {
+      const premioNombre = document.getElementById("premioSeleccionado");
+      const confirmarBtn = document.getElementById("confirmarCanje");
+      const cancelarBtn = document.getElementById("cancelarCanje");
+      const cerrarModalX = document.getElementById("cerrarModalX");
+      const modalElement = document.getElementById("confirmModal");
+      const modal = new bootstrap.Modal(modalElement);
 
-        const card = boton.closest('.card');
-        tokensPremio = parseInt(card.querySelector('.tokens-necesarios').textContent.trim());
+      document.querySelectorAll(".btn-canjear").forEach((boton) => {
+        boton.addEventListener("click", () => {
+          premioActual = boton.getAttribute("data-premio");
+          tokensPremio = parseInt(boton.getAttribute("data-cost"));
+          rewardIdActual = parseInt(boton.getAttribute("data-rewardid"));
+          botonActual = boton;
 
-        premioNombre.textContent = premioActual;
-        modal.show();
+          premioNombre.textContent = premioActual;
+          modal.show();
+        });
       });
-    });
 
-    confirmarBtn.addEventListener('click', () => {
-      // Restar tokens
-      const saldoTexto = saldoElem.textContent.match(/\d+/)[0];
-      let saldoActual = parseInt(saldoTexto);
-      saldoActual -= tokensPremio;
-      saldoElem.textContent = `Tu saldo actual: ${saldoActual} tokens`;
+      confirmarBtn.addEventListener("click", async () => {
+        try {
+          // Llamar endpoint para canjear premio
+          const response = await fetch(
+            "http://localhost:4000/api/rewards/Redemption",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: parseInt(userId),
+                rewardId: rewardIdActual,
+              }),
+            }
+          );
 
-      // Deshabilitar el botón si ya no alcanza tokens
-      if (saldoActual < tokensPremio) {
-        botonActual.classList.remove("btn-outline-light");
-        botonActual.classList.add("btn-dark");
-        botonActual.disabled = true;
-      }
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Error al canjear el premio");
+          }
 
-      // Mostrar alerta
-      const mensajeExito = document.createElement('div');
-      mensajeExito.className = 'alert alert-success alert-dismissible fade show mt-3 text-center';
-      mensajeExito.innerHTML = `
-        <strong>¡Operación exitosa!</strong> Has canjeado tus tokens por <strong>${premioActual}</strong>.
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-      `;
-      document.querySelector('.container').prepend(mensajeExito);
+          // Cerrar modal y recargar la página para actualizar saldo y premios
+          modal.hide();
+          location.reload();
+        } catch (error) {
+          alert("Error al canjear: " + error.message);
+        }
+      });
 
-      modal.hide();
-      botonActual = null;
-    });
-
-    // Asegura que se cierre el modal con "Cancelar" o con la "X"
-    cancelarBtn.addEventListener('click', () => modal.hide());
-    cerrarModalX.addEventListener('click', () => modal.hide());
+      cancelarBtn.addEventListener("click", () => modal.hide());
+      cerrarModalX.addEventListener("click", () => modal.hide());
+    }
   });
 </script>
 {% endblock %}
-
-
-

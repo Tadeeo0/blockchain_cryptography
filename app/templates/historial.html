@@ -1,13 +1,12 @@
-{% extends "base.html" %}
-
-{% block title %}Historial de Tokens{% endblock %}
-
-{% block content %}
+{% extends "base.html" %} {% block title %}Historial de Tokens{% endblock %} {%
+block content %}
 <div class="container mt-5">
   <h2 class="mb-4 text-info">Historial de Tokens Ganados</h2>
 
-    <a href="{{ url_for('main.home_view') }}" class="btn btn-outline-light">🏠 Volver al inicio</a>
-<hr>
+  <a href="{{ url_for('main.home_view') }}" class="btn btn-outline-light">
+    🏠 Volver al inicio
+  </a>
+  <hr />
   <table class="table table-dark table-striped table-hover">
     <thead>
       <tr>
@@ -17,26 +16,59 @@
         <th>Tokens Ganados</th>
       </tr>
     </thead>
-    <tbody>
-      {% for entrada in historial %}
-      <tr>
-        <td>{{ entrada.fecha }}</td>
-        <td>{{ entrada.tipo }}</td>
-        <td>{{ entrada.cantidad }}</td>
-        <td>{{ entrada.tokens }}</td>
-      </tr>
-      {% else %}
-      <tr>
-        <td colspan="4" class="text-center">No hay historial disponible.</td>
-      </tr>
-      {% endfor %}
-    </tbody>
+    <tbody></tbody>
   </table>
 
-   <div class="text-center mt-4 mb-5">
-    <h4 class="text-success">Tokens Totales: {{ total_tokens }}</h4>
-    <a href="{{ url_for('main.canjear_tokens') }}" class="btn btn-outline-info mt-3">Canjear Tokens</a>
-
+  <div class="text-center mt-4 mb-5">
+    <h4 class="text-success">
+      Tokens Totales: <span id="totalTokens">0</span>
+    </h4>
+    <a
+      href="{{ url_for('main.canjear_tokens') }}"
+      class="btn btn-outline-info mt-3"
+    >
+      Canjear Tokens
+    </a>
   </div>
 </div>
+{% endblock %} {% block scripts %}
+<script>
+  const userId = localStorage.getItem("userId");
+  async function cargarHistorial() {
+    console.log(userId);
+    try {
+      const res = await fetch(
+        `http://localhost:4000/api/users/recycle/history/${userId}`
+      );
+      const data = await res.json();
+
+      const tbody = document.querySelector("tbody");
+      tbody.innerHTML = "";
+
+      let totalTokens = 0;
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center">No hay historial disponible.</td></tr>`;
+      } else {
+        for (const entrada of data) {
+          totalTokens += entrada.tokensEarned;
+          const fila = document.createElement("tr");
+          fila.innerHTML = `
+            <td>${entrada.createdAt}</td>
+            <td>${entrada.type}</td>
+            <td>${entrada.amount}</td>
+            <td>${entrada.tokensEarned}</td>
+          `;
+          tbody.appendChild(fila);
+        }
+      }
+
+      document.querySelector("#totalTokens").textContent = totalTokens;
+    } catch (err) {
+      console.error("Error al cargar historial", err);
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", cargarHistorial);
+</script>
 {% endblock %}

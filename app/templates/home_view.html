@@ -11,6 +11,11 @@
 
 <div class="container mt-5">
   <h2 class="text-center text-info mb-4">Bienvenido a EcoTokens</h2>
+  <div class="text-center mb-4">
+  <h4 class="text-success">
+    Balance actual: <span id="balanceTokens">Cargando...</span>
+  </h4>
+</div>
   
   <div class="row">
     <!-- Escanear QR -->
@@ -63,4 +68,24 @@
   </div>
 </div>
 <hr>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const userId = localStorage.getItem("userId");
+
+  async function cargarBalance() {
+    try {
+      const res = await fetch(`http://localhost:4000/api/users/balance/${userId}`);
+      const data = await res.json();
+
+      document.getElementById("balanceTokens").textContent = data.balance ?? 0;
+    } catch (error) {
+      console.error("Error al obtener el balance:", error);
+      document.getElementById("balanceTokens").textContent = "Error";
+    }
+  }
+
+  window.addEventListener("DOMContentLoaded", cargarBalance);
+</script>
 {% endblock %}
