@@ -5,7 +5,6 @@ Este es un proyecto web desarrollado con Flask para implementar la interfaz de u
 ## Requisitos
 
 - Python 3.x
-- MySQL
 - pip
 
 ## Instalación y configuración
